@@ -1,0 +1,17 @@
+Block 2: NSG & NIC Creation (Fixed & Complete)
+
+:: 1. Create NSG1 and NSG2
+az network nsg create --resource-group MyMainResourceGroup --name NSG1
+az network nsg create --resource-group MyMainResourceGroup --name NSG2
+
+:: 2. Allow RDP (3389) and HTTP (80) on NSG1
+az network nsg rule create --resource-group MyMainResourceGroup --nsg-name NSG1 --name AllowRDP --protocol Tcp --priority 100 --destination-port-range 3389 --access Allow
+az network nsg rule create --resource-group MyMainResourceGroup --nsg-name NSG1 --name AllowHTTP --protocol Tcp --priority 105 --destination-port-range 80 --access Allow
+
+:: 3. Allow RDP (3389) and HTTP (80) on NSG2
+az network nsg rule create --resource-group MyMainResourceGroup --nsg-name NSG2 --name AllowRDP --protocol Tcp --priority 100 --destination-port-range 3389 --access Allow
+az network nsg rule create --resource-group MyMainResourceGroup --nsg-name NSG2 --name AllowHTTP --protocol Tcp --priority 105 --destination-port-range 80 --access Allow
+
+:: 4. Create NICs and Bind NSGs & Public IPs
+az network nic create --resource-group MyMainResourceGroup --name WinVM1VMNic --vnet-name MyVNet --subnet Subnet1 --public-ip-address WinVM1-PublicIP --network-security-group NSG1
+az network nic create --resource-group MyMainResourceGroup --name WinVM2VMNic --vnet-name MyVNet --subnet Subnet2 --public-ip-address WinVM2-PublicIP --network-security-group NSG2
