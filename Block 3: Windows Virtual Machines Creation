@@ -1,0 +1,21 @@
+Block 3: Windows Virtual Machines Creation
+
+az vm create --resource-group MyMainResourceGroup --name WinVM1 --nics WinVM1VMNic --image Win2022Datacenter --size Standard_D2s_v7 --admin-username azureuser --admin-password "AzureAdmin12345!"
+
+az vm run-command invoke --resource-group MyMainResourceGroup --name WinVM1 --command-id RunPowerShellScript --scripts "Install-WindowsFeature -name Web-Server -IncludeManagementTools" "Set-Content -Path C:\inetpub\wwwroot\iisstart.htm -Value '<h1>Hello World from WinVM1</h1>'"
+
+az vm run-command invoke --resource-group MyMainResourceGroup --name WinVM1 --command-id RunPowerShellScript --scripts "Install-WindowsFeature -Name Web-Server; New-NetFirewallRule -DisplayName 'Allow HTTP' -Direction Inbound -LocalPort 80 -Protocol TCP -Action Allow; Set-Content -Path 'C:\inetpub\wwwroot\iisstart.htm' -Value '<h1>Hello World from WinVM1</h1>'"
+
+Directly VM IPs par Check Karein:
+
+az network public-ip show --resource-group MyMainResourceGroup --name WinVM1-PublicIP --query ipAddress --output tsv
+
+
+
+az vm create --resource-group MyMainResourceGroup --name WinVM2 --nics WinVM2VMNic --image Win2022Datacenter --size Standard_D2s_v7 --admin-username azureuser --admin-password "AzureAdmin12345!"
+
+az vm run-command invoke --resource-group MyMainResourceGroup --name WinVM2 --command-id RunPowerShellScript --scripts "Install-WindowsFeature -name Web-Server -IncludeManagementTools" "Set-Content -Path C:\inetpub\wwwroot\iisstart.htm -Value '<h1>Hello World from WinVM2</h1>'"
+
+az vm run-command invoke --resource-group MyMainResourceGroup --name WinVM2 --command-id RunPowerShellScript --scripts "Install-WindowsFeature -Name Web-Server; New-NetFirewallRule -DisplayName 'Allow HTTP' -Direction Inbound -LocalPort 80 -Protocol TCP -Action Allow; Set-Content -Path 'C:\inetpub\wwwroot\iisstart.htm' -Value '<h1>Hello World from WinVM2</h1>'"
+
+az network public-ip show --resource-group MyMainResourceGroup --name WinVM2-PublicIP --query ipAddress --output tsv
