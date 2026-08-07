@@ -1,0 +1,19 @@
+Block 1: Infrastructure Base (RG, VNet, Subnets & Public IPs)
+
+:: 1. Create Resource Group
+az group create --name MyMainResourceGroup --location eastus
+
+:: 2. Create VNet with Subnet1 (WinVM1)
+az network vnet create --resource-group MyMainResourceGroup --name MyVNet --address-prefixes 10.0.0.0/16 --subnet-name Subnet1 --subnet-prefixes 10.0.1.0/24
+
+:: 3. Create Subnet2 (WinVM2)
+az network vnet subnet create --resource-group MyMainResourceGroup --vnet-name MyVNet --name Subnet2 --address-prefix 10.0.2.0/24
+
+:: 4. Create AppGatewaySubnet
+az network vnet subnet create --resource-group MyMainResourceGroup --vnet-name MyVNet --name AppGatewaySubnet --address-prefix 10.0.3.0/24
+
+:: 5. Create Static Public IPs
+az network public-ip create --resource-group MyMainResourceGroup --name WinVM1-PublicIP --sku Standard --allocation-method Static
+az network public-ip create --resource-group MyMainResourceGroup --name WinVM2-PublicIP --sku Standard --allocation-method Static
+az network public-ip create --resource-group MyMainResourceGroup --name MyLBPublicIP --sku Standard --allocation-method Static
+az network public-ip create --resource-group MyMainResourceGroup --name MyAGWPublicIP --sku Standard --allocation-method Static
