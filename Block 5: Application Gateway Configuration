@@ -1,0 +1,40 @@
+Block 5: Application Gateway Configuration
+Note: Application Gateway creation mein lagbhag 5-8 minute ka time lagta hai.
+
+1. Application Gateway Create Karein:
+
+
+az network application-gateway create --resource-group MyMainResourceGroup --name MyAppGateway --location eastus --sku Standard_v2 --capacity 2 --vnet-name MyVNet --subnet AppGatewaySubnet --public-ip-address MyAGWPublicIP --frontend-port 80 --http-settings-cookie-based-affinity Disabled --http-settings-port 80 --http-settings-protocol Http --priority 100
+
+2. WinVM1 aur WinVM2 ke Private IPs ko Backend Pool me Add Karein:
+
+az network application-gateway address-pool update --resource-group MyMainResourceGroup --gateway-name MyAppGateway --name appGatewayBackendPool --servers 10.0.1.4 10.0.2.4
+Block 6: Azure Traffic Manager Configuration
+Traffic Manager public endpoints ko route karne ke liye DNS name label ki zaroorat hoti hai.
+
+1. Public IP par DNS Name Label Set Karein:
+
+
+az network public-ip update --resource-group MyMainResourceGroup --name MyAGWPublicIP --dns-name "myminagw-demo-12345"
+2. Traffic Manager Profile Create Karein:
+
+
+az network traffic-manager profile create --resource-group MyMainResourceGroup --name MyTrafficManagerProfile --routing-method Priority --unique-dns-name "mymaintrafficmgr-12345" --ttl 30 --protocol HTTP --port 80 --path "/"
+3. Application Gateway ko Traffic Manager Endpoint ke taur par Add Karein:
+
+
+az network traffic-manager endpoint create --resource-group MyMainResourceGroup --profile-name MyTrafficManagerProfile --name AGW-Endpoint --type externalEndpoints --target "myminagw-demo-12345.eastus.cloudapp.azure.com" --endpoint-status Enabled --priority 1
+Verification & Testing Commands
+Setup complete hone ke baad in commands se details nikal kar test karein:
+
+1. Application Gateway IP obtain karein:
+
+
+az network public-ip show --resource-group MyMainResourceGroup --name MyAGWPublicIP --query ipAddress --output tsv
+(Is IP ko browser mein open karke Hello World test karein)
+
+2. Traffic Manager FQDN (URL) obtain karein:
+
+
+az network traffic-manager profile show --resource-group MyMainResourceGroup --name MyTrafficManagerProfile --query dnsConfig.fqdn --output tsv
+(Is URL ko browser mein paste karke routing test karein)
