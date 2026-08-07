@@ -1,0 +1,22 @@
+Here are the most common ways to refine and filter Azure VM SKU queries using the Azure CLI:
+
+1. Show Only Available SKUs (Filter Out Restricted Ones)
+To list SKUs in eastus that have no restrictions for your subscription:
+
+az vm list-skus --location eastus --resource-type virtualMachines --query "[?restrictions[0].reasonCode == null].{Name:name, Zones:locationInfo[0].zones}" --output table
+
+
+2. Filter by Specific VM Family or Series
+To filter for a specific series (e.g., Standard_D or Standard_B):
+
+az vm list-skus --location eastus --resource-type virtualMachines --query "[?contains(name, 'Standard_D')].{Name:name, Zones:locationInfo[0].zones, Restrictions:restrictions[0].reasonCode}" --output table
+
+3. Check SKU Availability Across Specific Availability Zones
+To check SKUs available in Availability Zone 1:
+
+az vm list-skus --location eastus --resource-type virtualMachines --query "[?locationInfo[0].zones != null && contains(locationInfo[0].zones, '1')].{Name:name, Zones:locationInfo[0].zones}" --output table
+
+4. Search for a Specific VM Size
+To check if a specific SKU (e.g., Standard_D4s_v5) is available in a region:
+
+az vm list-skus --location eastus --size Standard_D4s_v5 --output table
